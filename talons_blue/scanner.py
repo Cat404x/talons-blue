@@ -80,6 +80,8 @@ class Scanner:
         if parsed.scheme == 'https':
             try:
                 context = ssl.create_default_context()
+                # Enforce minimum TLS version of 1.2 for security
+                context.minimum_version = ssl.TLSVersion.TLSv1_2
                 with socket.create_connection((hostname, 443), timeout=self.timeout) as sock:
                     with context.wrap_socket(sock, server_hostname=hostname) as ssock:
                         cert = ssock.getpeercert()
