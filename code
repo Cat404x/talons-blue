@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+# ==========================================================
+# Talons Blue
+# ==========================================================
+# Author: Cat404x
+# Version: 1.0.0
+# License: MIT
+#
+# STRUCTURE LOCK NOTICE:
+# ----------------------
+# This file is the authoritative implementation.
+# Do NOT refactor into modules.
+# Do NOT split into packages.
+# Do NOT change directory layout.
+# Do NOT auto-generate setup.py or pyproject.toml.
+# This repository is intentionally a single-file CLI tool.
+#
+# Repository Structure MUST remain:
+#
+# talons-blue/
+# ├── talons_blue.py
+# ├── README.md
+# ├── LICENSE
+# ├── requirements.txt
+# └── .gitignore
+#
+# Only modify internal logic if explicitly instructed.
+# ========================================================== 
+
+"""
+Talons Blue
+
+Defensive Web Surface Monitoring Tool
+
+Intended for:
+- Owned assets
+- Authorized security validation
+- Compliance auditing
+
+Safeguards:
+- Domain allowlist enforcement
+- robots.txt compliance
+- Fixed rate limiting
+- Passive surface inspection only
+
+No crawling.
+No brute force.
+No evasion techniques.
+"""
+
+import argparse
+import requests
+import urllib.robotparser
+import time
+import json
+from urllib.parse import urlparse
+from bs4 import BeautifulSoup
+from datetime import datetime
+
+
+class TalonsBlue:
+
+    REQUIRED_HEADERS = [
+        "X-Frame-Options",
+        "Content-Security-Policy",
+        "Strict-Transport-Security",
+        "X-Content-Type-Options",
+        "Referrer-Policy"
+    ]
+
+    def __init__(self, allowed_domains, delay=5):
+
+        if not allowed_domains:
+            raise ValueError("allowed_domains cannot be empty.")
+
+        self.allowed_domains = [d.lower() for d in allowed_domains]
+        self.delay = delay
+
+        self.session = requests.Session()
+        self.session.headers.update({
+            "User-Agent": "TalonsBlue/1.0 (Defensive Surface Monitor - Authorized Use Only)"
+        })
+
+    # ------------------------------------------------------
+    # DOMAIN VALIDATION
+    # ------------------------------------------------------
+    def _allowed_domain(self, url):
+        domain = urlparse(url).netloc.lower()
+        return any(d in domain for d in self.allowed_domains)
+
+    # ------------------------------------------------------
+    # ROBOTS.TXT VALIDATION
+    # ------------------------------------------------------
+    def _robots_allowed(self, url):
+
+        parsed = urlparse(url)
+        robots_url = f"{parsed.scheme}://{parsed.netloc}/robots.txt"
+
+        rp = urllib.robotparser.RobotFileParser()
+        rp.set_url(robots_url)
+
+        try:
+            rp.read()
+            return rp.can_fetch(
+                self.session.headers["User-Agent"],
+                url
+            )
+        except Exception:
+            return False
+
+    # ------------------------------------------------------
+    # SECURITY HEADER CHECK
+    # ------------------------------------------------------
+    def _check_security_headers(self, headers):
+        return [
+            header for header in self.REQUIRED_HEADERS
+            if header not in headers
+        ]
+
+    # ------------------------------------------------------
+    # MAIN SCAN
+    # ------------------------------------------------------
+    def scan(self, url):
+
+        if not url.startswith(("http://", "https://")):
+            raise ValueError("URL must include http:// or https://")
+
+        if not self._allowed_domain(url):
+            raise PermissionError("Domain not in approved allowlist.")
+
+        if not self._robots_allowed(url):
+            raise PermissionError("Blocked by robots.txt policy.")
+
+        time.sleep(self.delay)
+
+        try:
+            response = self.session.get(url, timeout=10)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"Network error: {e}")
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        result = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "url": url,
+            "status_code": response.status_code,
+            "content_length": len(response.content),
+            "https_enforced": url.startswith("https"),
+            "forms_detected": len(soup.find_all("form")),
+            "missing_security_headers": self._check_security_headers(
+                response.headers
+            ),
+            "server_header": response.headers.get("Server")
+        }
+
+        return result
+
+    # ------------------------------------------------------
+    # CLEANUP
+    # ------------------------------------------------------
+    def close(self):
+        self.session.close()
+
+
+# ==========================================================
+# CLI ENTRY POINT
+# ==========================================================
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description="Talons Blue - Defensive Web Surface Monitor"
+    )
+
+    parser.add_argument(
+        "--url",
+        required=True,
+        help="Target URL to scan"
+    )
+
+    parser.add_argument(
+        "--domain",
+        required=True,
+        help="Authorized domain (e.g., example.com)"
+    )
+
+    parser.add_argument(
+        "--delay",
+        type=int,
+        default=5,
+        help="Delay between requests (seconds)"
+    )
+
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output result as formatted JSON"
+    )
+
+    args = parser.parse_args()
+
+    scanner = TalonsBlue(
+        allowed_domains=[args.domain],
+        delay=args.delay
+    )
+
+    try:
+        result = scanner.scan(args.url)
+
+        if args.json:
+            print(json.dumps(result, indent=4))
+        else:
+            print(result)
+
+    except PermissionError as e:
+        print(f"[PERMISSION ERROR] {e}")
+    except Exception as e:
+        print(f"[ERROR] {e}")
+    finally:
+        scanner.close()
+
+
+if __name__ == "__main__":
+    main()
