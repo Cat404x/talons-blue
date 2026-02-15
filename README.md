@@ -48,40 +48,55 @@ Clone the repository:
 ```bash
 git clone https://github.com/Cat404x/talons-blue.git
 cd talons-blue
+```
 
 Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
+---
 
-⸻
+## Requirements
 
-Requirements
-	•	Python 3.9+
-	•	requests
-	•	beautifulsoup4
+- Python 3.9+
+- requests
+- beautifulsoup4
 
-⸻
+---
 
-Usage
+## Usage
 
 Basic scan:
 
+```bash
 python talons_blue.py --url https://example.com --domain example.com
+```
 
 JSON output:
 
+```bash
 python talons_blue.py --url https://example.com --domain example.com --json
+```
 
 Custom delay:
 
+```bash
 python talons_blue.py --url https://example.com --domain example.com --delay 3
+```
 
+Full example with all options:
 
-⸻
+```bash
+python talons_blue.py --url "https://example.com" --domain "example.com" --delay 5 --json
+```
 
-Example Output
+---
 
+## Example Output
+
+```json
 {
     "timestamp": "2026-01-01T12:00:00",
     "url": "https://example.com",
@@ -92,35 +107,46 @@ Example Output
     "missing_security_headers": [],
     "server_header": "nginx"
 }
+```
 
+---
 
-⸻
-
-Architecture
+## Architecture
 
 Talons Blue operates in the following sequence:
-	1.	Validate URL scheme (http/https)
-	2.	Validate domain against allowlist
-	3.	Validate robots.txt permission
-	4.	Apply fixed delay
-	5.	Retrieve page content
-	6.	Perform passive header and surface analysis
-	7.	Return structured result
 
-⸻
+1. Validate URL scheme (http/https)
+2. Validate domain against allowlist
+3. Validate robots.txt permission
+4. Apply fixed delay
+5. Retrieve page content
+6. Perform passive header and surface analysis
+7. Return structured result
 
-Legal Notice
+---
+
+## Legal Notice
 
 Talons Blue is intended only for:
-	•	Assets you own
-	•	Systems you have explicit written authorization to test
-	•	Compliance and defensive validation purposes
+
+- Assets you own
+- Systems you have explicit written authorization to test
+- Compliance and defensive validation purposes
 
 Unauthorized use may violate local laws and platform policies.
 
-⸻
+---
 
-License
+## License
 
-MIT License
-Copyright (c) 2026 
+MIT License  
+Copyright (c) 2026 Cat404x
+
+See [LICENSE](LICENSE) file for full details.
+
+---
+
+## Author
+
+**Cat404x**  
+GitHub: [@Cat404x](https://github.com/Cat404x)
