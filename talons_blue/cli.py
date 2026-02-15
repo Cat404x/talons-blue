@@ -5,8 +5,8 @@ Command-line interface for Talons Blue scanner.
 
 import argparse
 import sys
-from talons_blue.scanner import Scanner
-from talons_blue.utils import format_scan_result, parse_target_list
+from .scanner import Scanner
+from .utils import format_scan_result, parse_target_list
 
 
 def main():

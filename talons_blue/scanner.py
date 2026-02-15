@@ -6,6 +6,7 @@ import socket
 import ssl
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+from urllib.parse import urlparse
 
 from .utils import validate_url, validate_ip
 
@@ -68,7 +69,6 @@ class Scanner:
         status = 'completed'
         
         # Extract hostname from URL
-        from urllib.parse import urlparse
         parsed = urlparse(url)
         hostname = parsed.netloc
         

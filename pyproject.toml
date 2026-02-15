@@ -29,7 +29,7 @@ classifiers = [
 keywords = ["security", "scanning", "validation", "defensive"]
 
 [project.scripts]
-talons-blue = "cli:main"
+talons-blue = "talons_blue.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Cat404x/talons-blue"
