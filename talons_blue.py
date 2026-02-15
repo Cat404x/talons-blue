@@ -29,7 +29,7 @@ class TalonsBlue:
         try:
             rp.read()
             return rp.can_fetch(self.session.headers["User-Agent"], url)
-        except:
+        except Exception:
             return False
 
     def scan(self, url):
