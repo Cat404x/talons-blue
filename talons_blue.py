@@ -141,7 +141,9 @@ class TalonsBlue:
                 form_data.append(form_info)
 
             return form_data
-        except Exception as e:
+        except Exception:
+            # If HTML parsing fails, return empty list
+            # The scan will continue but forms_detected will be 0
             return []
 
     def scan_url(self, url):
