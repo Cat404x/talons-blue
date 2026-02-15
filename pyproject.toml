@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "talons-blue"
+version = "0.1.0"
+description = "Defensive surface validation for owned or authorized assets"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "Cat404x"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: System :: Networking :: Monitoring",
+]
+keywords = ["security", "scanning", "validation", "defensive"]
+
+[project.scripts]
+talons-blue = "talons_blue.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Cat404x/talons-blue"
+Repository = "https://github.com/Cat404x/talons-blue"
+
+[tool.setuptools]
+packages = ["talons_blue"]
