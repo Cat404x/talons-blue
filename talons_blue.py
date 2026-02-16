@@ -98,13 +98,14 @@ class TalonsBlue:
                 for line in lines:
                     line = line.strip()
                     
-                    # Check User-agent - reset flag for each new User-agent line
+                    # Check User-agent directive and set flag accordingly
                     if line.lower().startswith('user-agent:'):
                         agent = line.split(':', 1)[1].strip()
+                        # Only apply rules if user-agent is '*' or 'talonsblue'
                         user_agent_applies = agent == '*' or 'talonsblue' in agent.lower()
                     
-                    # Check Disallow rules
-                    if user_agent_applies and line.lower().startswith('disallow:'):
+                    # Check Disallow rules only if current user-agent section applies
+                    elif user_agent_applies and line.lower().startswith('disallow:'):
                         disallow_path = line.split(':', 1)[1].strip()
                         if disallow_path and disallow_path != '/':
                             target_path = urlparse(self.url).path or '/'
@@ -153,8 +154,7 @@ class TalonsBlue:
             http_url = self.url.replace('https://', 'http://')
             try:
                 response = self.session.get(http_url, timeout=10, allow_redirects=True)
-                final_url = response.url
-                return urlparse(final_url).scheme == 'https'
+                return urlparse(response.url).scheme == 'https'
             except requests.RequestException:
                 # If HTTP fails, assume HTTPS is enforced
                 return True
