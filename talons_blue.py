@@ -10,7 +10,7 @@ import argparse
 import json
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import urlparse, urljoin
 from typing import Dict, List, Optional, Tuple
 
@@ -98,7 +98,7 @@ class TalonsBlue:
                 for line in lines:
                     line = line.strip()
                     
-                    # Check User-agent
+                    # Check User-agent - reset flag for each new User-agent line
                     if line.lower().startswith('user-agent:'):
                         agent = line.split(':', 1)[1].strip()
                         user_agent_applies = agent == '*' or 'talonsblue' in agent.lower()
@@ -246,7 +246,7 @@ class TalonsBlue:
         
         # Step 7: Return structured result
         result = {
-            'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S'),
+            'timestamp': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'url': self.url,
             'status_code': response.status_code,
             'content_length': len(response.content),
