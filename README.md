@@ -1,8 +1,4 @@
-Perfect. Here’s a clean, human-readable README.md you can paste directly into your repository.
 
-This version is clear, not robotic, and shows exactly what Talons Blue does and doesn’t do.
-
-⸻
 
 Talons Blue
 
